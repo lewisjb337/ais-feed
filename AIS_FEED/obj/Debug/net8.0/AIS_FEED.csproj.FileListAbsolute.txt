@@ -1,0 +1,14 @@
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\bin\Debug\net8.0\AIS_FEED.exe
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\bin\Debug\net8.0\AIS_FEED.deps.json
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\bin\Debug\net8.0\AIS_FEED.runtimeconfig.json
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\bin\Debug\net8.0\AIS_FEED.dll
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\bin\Debug\net8.0\AIS_FEED.pdb
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.AssemblyInfoInputs.cache
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.AssemblyInfo.cs
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.csproj.CoreCompileInputs.cache
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.dll
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\refint\AIS_FEED.dll
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.pdb
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\AIS_FEED.genruntimeconfig.cache
+C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\obj\Debug\net8.0\ref\AIS_FEED.dll
