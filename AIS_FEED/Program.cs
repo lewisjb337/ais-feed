@@ -1,7 +1,9 @@
 using System.Net.WebSockets;
 using System.Text;
 using AIS_Feed.Models.AIS;
+using AIS_FEED.Services;
 using AIS_FEED.Services.Abstractions;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Supabase;
 
@@ -9,10 +11,18 @@ namespace AIS_Feed;
 
 internal abstract class Program
 {
-    public static IProjectConfiguration? configuration { get; set; }
-    public static IDataScraper? dataScraper { get; set; }
+    private static IProjectConfiguration? configuration { get; set; }
+    private static IDataScraper? dataScraper { get; set; }
     public static async Task Main(string[] args)
     {
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+        IConfiguration config = builder.Build();
+
+        configuration = new ProjectConfiguration(config);
+        dataScraper = new DataScraper();
         
         var options = new SupabaseOptions
         {
@@ -60,15 +70,24 @@ internal abstract class Program
                         var existingVessels = vesselResult.Models;
 
                         var existingVessel = existingVessels.FirstOrDefault(v => v.MMSI == metaData.MMSI);
+
+                        // Below seems to hit block after given time, likely IP blacklist due to spam...
+                        var voyageData = await dataScraper!.ScrapeVoyageData($"https://www.vesselfinder.com/vessels/details/{metaData.MMSI}");
+                        var vesselData = await dataScraper!.ScrapeVesselData($"https://www.vesselfinder.com/vessels/details/{metaData.MMSI}");
                             
                         var vessel = new MetaData
                         {
                             MMSI = metaData.MMSI,
-                            MMSI_String = metaData.MMSI_String,
+                            IMO = vesselData.IMO,
                             ShipName = metaData.ShipName,
+                            Callsign = voyageData.Callsign,
+                            ShipType = vesselData.ShipType,
+                            Status = voyageData.Status,
+                            Flag = vesselData.Flag,
+                            YearBuilt = vesselData.YearBuilt,
                             Latitude = metaData.Latitude,
                             Longitude = metaData.Longitude,
-                            TimeUtc = metaData.TimeUtc,
+                            TimeUtc = DateTime.UtcNow,
                             Cog = positionReport.Cog,
                             Raim = positionReport.Raim,
                             RateOfTurn = positionReport.RateOfTurn,
@@ -76,21 +95,104 @@ internal abstract class Program
                             TrueHeading = positionReport.TrueHeading
                         };
 
-                        var voyageData = await dataScraper!.ScrapeVoyageData($"https://www.vesselfinder.com/vessels/details/{vessel.MMSI}");
-                        var vesselData = await dataScraper!.ScrapeVesselData($"https://www.vesselfinder.com/vessels/details/{vessel.MMSI}");
+                        var allowedVesselTypes = new List<string>()
+                        {
+                            // Cargo
+                            "Bulk Carrier",
+                            "General Cargo Ship",
+                            "Container Ship",
+                            "Refrigerated Cargo Ship",
+                            "Ro-Ro Cargo Ship",
+                            "Vehicles Carrier",
+                            "Cement Carrier",
+                            "Wood Chips Carrier",
+                            "Urea Carrier",
+                            "Aggregates Carrier",
+                            "Limestone Carrier",
+                            "Ore Carrier",
+                            "Landing Craft",
+                            "Livestock Carrier",
+                            "Heavy Load Carrier",
+                            "Utility Vessel",
+                            "Deck Cargo Ship",
+                            "Fish Carrier",
+                            "Self-Discharging Bulk Carrier",
+                            "Container Ro-Ro Cargo Ship",
+                            "Palletised Cargo Ship",
+                            "Bulk/Oil/Chemical Carrier",
+                            "Bulk/Caustic Soda Carrier",
+                            "Bulk/Sulphuric Acid Carrier",
+                            "Bulk/Oil Carrier",
+                            "Ore/Oil Carrier",
+                            "Refined Sugar Carrier",
+                            "Powder Carrier",
+                            "Nuclear Fuel Carrier",
+                            "Barge Carrier",
+                            "Trans-Shipment Vessel",
+                            // Tanker
+                            "Crude Oil Tanker",
+                            "Oil Products Tanker",
+                            "Chemical/Oil Products Tanker",
+                            "LNG Tanker",
+                            "LPG Tanker",
+                            "Asphalt/Bitumen",
+                            "Bunkering Tanker",
+                            "FSO/FPSO Oil",
+                            "FSO/FPSO Gas",
+                            "Chemical Tanker",
+                            "Bunkering Tanker (LNG)",
+                            "Bunkering Tanker (LNG/OIL)",
+                            "Combination Gas Tanker (LNG/LPG)",
+                            "Edible Oil Tanker",
+                            "Vegetable Oil Tanker",
+                            "Wine Tanker",
+                            "Fruit juice carrier- refrigerated",
+                            "Water Tanker",
+                            "CO2 Tanker",
+                            "Caprolactam Tanker",
+                            "Molasses Tanker",
+                            "Waste Disposal Vessel",
+                            "Coal/Oil Mixture Tanker",
+                            // Other
+                            "Crane Ship",
+                            "Drilling Ship",
+                            "Work/Repair Vessel",
+                            "Icebreaker",
+                            "Pipe-Layer",
+                            "Pipe Burying Vessel",
+                            "Cable-Layer",
+                            "Cable Repair Ship",
+                            "Research Vessel",
+                            "Power Station Vessel",
+                            "Wind Turbine Installation Vessel",
+                            "Rocket Launch Support Ship",
+                            "Training Ship",
+                            "Fishing Support Vessel",
+                            "Supply Vessel",
+                            "Offshore Support Vessel",
+                            "Offshore Tug/Supply Ship",
+                            "Offshore Supply Ship",
+                            "Offshore Processing Ship",
+                            "Buoy/Lighthouse Vessel",
+                            "Production Testing Vessel",
+                            "Well-Stimulation Vessel",
+                            "Exhibition Vessel",
+                            "Wing In Ground"
+                        };
 
-                        // TODO: Update the data we are adding to the database, and update table to match
-                        
-                        if (existingVessel != null)
+                        if (allowedVesselTypes.Contains(vessel.ShipType))
                         {
-                            vessel.Id = existingVessel.Id;
-                            await client.From<MetaData>().Update(vessel, cancellationToken: token);
-                            Console.WriteLine($"Updated Ship: {metaData.ShipName} with new position and details.");
-                        }
-                        else
-                        {
-                            await client.From<MetaData>().Insert(vessel, cancellationToken: token);
-                            Console.WriteLine($"New Ship Detected: {metaData.ShipName}");
+                            if (existingVessel != null)
+                            {
+                                vessel.Id = existingVessel.Id;
+                                await client.From<MetaData>().Update(vessel, cancellationToken: token);
+                                Console.WriteLine($"Updated Ship: {metaData.ShipName} with new position and details.");
+                            }
+                            else
+                            {
+                                await client.From<MetaData>().Insert(vessel, cancellationToken: token);
+                                Console.WriteLine($"New Ship Detected: {metaData.ShipName}");
+                            }
                         }
                     }
                 }

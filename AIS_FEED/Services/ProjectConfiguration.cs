@@ -2,25 +2,26 @@
 using AIS_FEED.Services.Abstractions;
 using Microsoft.Extensions.Configuration;
 
-namespace AIS_FEED.Services;
-
-public class ProjectConfiguration(IConfiguration configuration) : IProjectConfiguration
+namespace AIS_FEED.Services
 {
-    public SupabaseConfig GetSupabaseConfig()
+    public class ProjectConfiguration(IConfiguration configuration) : IProjectConfiguration
     {
-        return new SupabaseConfig
+        public SupabaseConfig GetSupabaseConfig()
         {
-            Url = configuration.GetSection("Supabase")["Url"]!,
-            Key = configuration.GetSection("Supabase")["Key"]!
-        };
-    }   
+            return new SupabaseConfig
+            {
+                Url = configuration.GetSection("Supabase")["Url"]!,
+                Key = configuration.GetSection("Supabase")["Key"]!
+            };
+        }   
     
-    public AisStreamConfig GetAisStreamConfig()
-    {
-        return new AisStreamConfig
+        public AisStreamConfig GetAisStreamConfig()
         {
-            Url = configuration.GetSection("AisStream")["Url"]!,
-            Key = configuration.GetSection("AisStream")["ApiKey"]!
-        };
-    }  
+            return new AisStreamConfig
+            {
+                Url = configuration.GetSection("AisStream")["Url"]!,
+                Key = configuration.GetSection("AisStream")["ApiKey"]!
+            };
+        }  
+    }
 }

@@ -1,16 +1,18 @@
-﻿using AIS_FEED.Services.Abstractions;
+﻿using AIS_Feed.Models.Scraper;
+using AIS_FEED.Services.Abstractions;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 
 namespace AIS_FEED.Services;
 
 public class DataScraper : IDataScraper
 {
-    public async Task<string> ScrapeVesselData(string url)
+    public async Task<VesselData> ScrapeVesselData(string url)
     {
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
         var response = await client.GetStringAsync(url);
-            
+
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(response);
 
@@ -18,7 +20,7 @@ public class DataScraper : IDataScraper
 
         if (tableNode == null)
         {
-            throw new Exception("Vessel Particulars table not found.");
+            return new VesselData();
         }
 
         var rows = tableNode.SelectNodes(".//tr");
@@ -27,15 +29,27 @@ public class DataScraper : IDataScraper
             throw new Exception("No rows found in the Vessel Particulars table.");
         }
 
-        var particulars = rows
-            .Select(row => row.SelectNodes("td"))
-            .Where(cells => cells is { Count: 2 })
-            .Aggregate("", (current, cells) => current + $"{cells[0].InnerText.Trim()}: {cells[1].InnerText.Trim()}\n");
+        var particulars = new Dictionary<string, string>();
 
-        return particulars.Trim();
+        foreach (var row in rows)
+        {
+            var cells = row.SelectNodes("td");
+            
+            if (cells is not { Count: 2 }) continue;
+            
+            var key = cells[0].InnerText.Trim();
+            var value = cells[1].InnerText.Trim();
+            particulars[key] = value;
+        }
+
+        var jsonParticulars = JsonConvert.SerializeObject(particulars);
+    
+        var vesselData = JsonConvert.DeserializeObject<VesselData>(jsonParticulars);
+
+        return vesselData!;
     }
 
-    public async Task<string> ScrapeVoyageData(string url)
+    public async Task<VoyageData> ScrapeVoyageData(string url)
     {
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
@@ -57,8 +71,7 @@ public class DataScraper : IDataScraper
             throw new Exception("No rows found in the Voyage Data table.");
         }
 
-        var navigationStatus = string.Empty;
-        var callsign = string.Empty;
+        var voyageData = new VoyageData();
 
         foreach (var row in rows)
         {
@@ -71,20 +84,20 @@ public class DataScraper : IDataScraper
                 switch (label)
                 {
                     case "Navigation Status":
-                        navigationStatus = value;
+                        voyageData.Status = value;
                         break;
                     case "Callsign":
-                        callsign = value;
+                        voyageData.Callsign = value;
                         break;
                 }
             }
         }
 
-        if (string.IsNullOrEmpty(navigationStatus) || string.IsNullOrEmpty(callsign))
+        if (string.IsNullOrEmpty(voyageData.Status) || string.IsNullOrEmpty(voyageData.Callsign))
         {
             throw new Exception("Required data (Navigation Status or Callsign) not found.");
         }
 
-        return $"Navigation Status: {navigationStatus}\nCallsign: {callsign}";
+        return voyageData;
     }
 }

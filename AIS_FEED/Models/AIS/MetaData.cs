@@ -10,10 +10,20 @@ public class MetaData : BaseModel
     public int Id { get; set; }
     [Column("MMSI")]
     public long MMSI { get; set; }
-    [Column("MMSI_String")]
-    public string MMSI_String { get; set; }
+    [Column("IMO")]
+    public long IMO { get; set; }
     [Column("ShipName")]
-    public string ShipName { get; set; }
+    public string ShipName { get; set; } = string.Empty;
+    [Column("Callsign")]
+    public string Callsign { get; set; } = string.Empty;
+    [Column("ShipType")]
+    public string ShipType { get; set; } = string.Empty;
+    [Column("Status")]
+    public string Status { get; set; } = string.Empty;
+    [Column("Flag")]
+    public string Flag { get; set; } = string.Empty;
+    [Column("YearBuilt")]
+    public string YearBuilt { get; set; } = string.Empty;
     [Column("Latitude")]
     public double Latitude { get; set; }
     [Column("Longitude")]
