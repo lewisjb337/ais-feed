@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lewis.baxter\\Documents\\Development\\AIS_FEED\\AIS_FEED\\AIS_FEED.csproj": {}
+    "C:\\Users\\lewis.baxter\\RiderProjects\\ais-feed\\AIS_FEED\\AIS_FEED.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lewis.baxter\\Documents\\Development\\AIS_FEED\\AIS_FEED\\AIS_FEED.csproj": {
+    "C:\\Users\\lewis.baxter\\RiderProjects\\ais-feed\\AIS_FEED\\AIS_FEED.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lewis.baxter\\Documents\\Development\\AIS_FEED\\AIS_FEED\\AIS_FEED.csproj",
+        "projectUniqueName": "C:\\Users\\lewis.baxter\\RiderProjects\\ais-feed\\AIS_FEED\\AIS_FEED.csproj",
         "projectName": "AIS_FEED",
-        "projectPath": "C:\\Users\\lewis.baxter\\Documents\\Development\\AIS_FEED\\AIS_FEED\\AIS_FEED.csproj",
+        "projectPath": "C:\\Users\\lewis.baxter\\RiderProjects\\ais-feed\\AIS_FEED\\AIS_FEED.csproj",
         "packagesPath": "C:\\Users\\lewis.baxter\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lewis.baxter\\Documents\\Development\\AIS_FEED\\AIS_FEED\\obj\\",
+        "outputPath": "C:\\Users\\lewis.baxter\\RiderProjects\\ais-feed\\AIS_FEED\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -46,6 +46,24 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "HtmlAgilityPack": {
+              "target": "Package",
+              "version": "[1.11.67, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[9.0.0-rc.2.24473.5, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "Supabase": {
+              "target": "Package",
+              "version": "[1.1.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

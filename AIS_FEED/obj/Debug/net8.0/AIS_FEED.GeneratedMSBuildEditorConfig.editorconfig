@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AIS_FEED
-build_property.ProjectDir = C:\Users\lewis.baxter\Documents\Development\AIS_FEED\AIS_FEED\
+build_property.ProjectDir = C:\Users\lewis.baxter\RiderProjects\ais-feed\AIS_FEED\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
