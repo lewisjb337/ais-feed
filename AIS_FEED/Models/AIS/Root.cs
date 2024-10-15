@@ -2,7 +2,7 @@
 
 public class Root
 {
-    public Message Message { get; set; }
-    public string MessageType { get; set; }
-    public MetaData MetaData { get; set; }
+    public Message? Message { get; set; }
+    public string MessageType { get; set; } = string.Empty;
+    public MetaData? MetaData { get; set; }
 }

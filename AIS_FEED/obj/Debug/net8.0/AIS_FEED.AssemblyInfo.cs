@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIS_FEED")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9262f216b4ac675c12ba78bcbe4822a260033a1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+61fd1d7c7d502e10b4b4b1e133e819aa460bc111")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIS_FEED")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIS_FEED")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
