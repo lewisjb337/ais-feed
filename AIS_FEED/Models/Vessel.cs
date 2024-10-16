@@ -14,8 +14,8 @@ public class Vessel : BaseModel
     public long IMO { get; set; }
     [Column("ShipName")]
     public string ShipName { get; set; } = string.Empty;
-    [Column("CallSign")]
-    public string CallSign { get; set; } = string.Empty;
+    [Column("Callsign")]
+    public string Callsign { get; set; } = string.Empty;
     [Column("Latitude")]
     public double Latitude { get; set; }
     [Column("Longitude")]

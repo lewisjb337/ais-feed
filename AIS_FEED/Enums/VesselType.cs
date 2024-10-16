@@ -21,4 +21,5 @@ public enum VesselType
     Cargo,                  // 70-79
     Tanker,                 // 80-89
     Other,                  // 90-99
+    Unknown
 }

@@ -3,7 +3,7 @@
 public class ShipStaticData
 {
     public int AisVersion { get; set; }
-    public string CallSign { get; set; } = string.Empty;
+    public string Callsign { get; set; } = string.Empty;
     public string Destination { get; set; } = string.Empty;
     public Dimension? Dimension { get; set; }
     public bool Dte { get; set; }

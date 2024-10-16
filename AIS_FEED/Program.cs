@@ -1,5 +1,6 @@
 using System.Net.WebSockets;
 using System.Text;
+using AIS_Feed.Enums;
 using AIS_Feed.Models;
 using AIS_Feed.Models.AIS;
 using AIS_FEED.Services;
@@ -70,29 +71,68 @@ internal abstract class Program
 
                         var existingVessel = existingVessels.FirstOrDefault(v => v.MMSI == metaData.MMSI);
 
+                        var shipType = shipStaticData.Type switch
+                        {
+                            >= 20 and <= 29 => VesselType.WingInGround,
+                            30 => VesselType.Fishing,
+                            31 or 32 => VesselType.Towing,
+                            33 => VesselType.Dredging,
+                            34 => VesselType.DivingOps,
+                            35 => VesselType.MilitaryOps,
+                            36 => VesselType.Sailing,
+                            37 => VesselType.PleasureCraft,
+                            >= 40 and <= 49 => VesselType.HighSpeedCraft,
+                            50 => VesselType.PilotVessel,
+                            51 => VesselType.SearchAndRescue,
+                            52 => VesselType.Tug,
+                            53 => VesselType.PortTender,
+                            55 => VesselType.LawEnforcement,
+                            58 => VesselType.MedicalTransport,
+                            >= 60 and <= 69 => VesselType.Passenger,
+                            >= 70 and <= 79 => VesselType.Cargo,
+                            >= 80 and <= 89 => VesselType.Tanker,
+                            >= 90 and <= 99 => VesselType.Other,
+                            _ => VesselType.Unknown
+                        };
+
                         var vessel = new Vessel
                         {
                             MMSI = metaData.MMSI,
                             IMO = shipStaticData.ImoNumber,
                             ShipName = metaData.ShipName,
-                            CallSign = shipStaticData.CallSign,
+                            Callsign = shipStaticData.Callsign,
                             Latitude = metaData.Latitude,
                             Longitude = metaData.Longitude,
                             Received = DateTime.UtcNow,
                             TypeId = shipStaticData.Type,
-                            Type = "to be added somehow"
+                            Type = shipType.ToString()
                         };
 
-                        if (existingVessel != null)
+                        var allowedShipTypes = new List<string>()
                         {
-                            vessel.Id = existingVessel.Id;
-                            await client.From<Vessel>().Update(vessel, cancellationToken: token);
-                            Console.WriteLine($"Updated Ship: {metaData.ShipName} with new position and details.");
-                        }
-                        else
+                            "HighSpeedCraft",
+                            "PilotVessel",
+                            "SearchAndRescue",
+                            "Tug",
+                            "PortTender",
+                            "LawEnforcement",
+                            "Tanker",
+                            "Cargo"
+                        };
+
+                        if (allowedShipTypes.Contains(vessel.Type))
                         {
-                            await client.From<Vessel>().Insert(vessel, cancellationToken: token);
-                            Console.WriteLine($"New Ship Detected: {metaData.ShipName}");
+                            if (existingVessel != null)
+                            {
+                                vessel.Id = existingVessel.Id;
+                                await client.From<Vessel>().Update(vessel, cancellationToken: token);
+                                Console.WriteLine($"Updated Ship: {metaData.ShipName} with new position and details.");
+                            }
+                            else
+                            {
+                                await client.From<Vessel>().Insert(vessel, cancellationToken: token);
+                                Console.WriteLine($"New Ship Detected: {metaData.ShipName}");
+                            }
                         }
                     }
                 }
